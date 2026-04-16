@@ -1,0 +1,3 @@
+class MealMapper {
+  const MealMapper();
+}

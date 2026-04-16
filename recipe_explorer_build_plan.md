@@ -25,7 +25,7 @@ Nested navigation inside Home:
 
 Core learning outcomes:
 - API -> model mapping
-- State management with Provider
+- State management with GetX
 - Cross-screen favourites sync
 - Debounced search
 - Reliable UI states (loading/error/empty/offline)

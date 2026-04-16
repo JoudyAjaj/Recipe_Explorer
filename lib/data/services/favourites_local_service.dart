@@ -1,0 +1,3 @@
+class FavouritesLocalService {
+  const FavouritesLocalService();
+}

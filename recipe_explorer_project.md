@@ -181,7 +181,7 @@ Not used on:
 
 ### Phase 4 (Days 11–13)
 - Favourites system
-- Provider pattern
+- GetX controller pattern
 - Local storage
 
 ---
