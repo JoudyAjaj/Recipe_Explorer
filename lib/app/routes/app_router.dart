@@ -19,17 +19,35 @@ class AppRoutes {
   static const String categoryMeals = 'category/:categoryName';
   static const String mealDetail = 'meal/:mealId';
 
+  //مهم جداً:
+  // :categoryName → متغير داخل الرابط
+  // :mealId → متغير
+  // مثال:
+  // /home/category/Seafood
+  // /home/meal/123
+  //   //
   const AppRoutes._();
 }
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.home,
+  // نحدد المسار الابتدائي عند تشغيل التطبيق.
+  initialLocation:
+      AppRoutes.home, // نستخدم ShellRoute لاحتواء التبويبات الرئيسية.
   routes: <RouteBase>[
     // ShellRoute يسمح بثبات الـ Bottom Navigation بين التبويبات.
     ShellRoute(
+      //لإطار الثابت (فيه Bottom Nav مثلاً) بيتغير بس محتوى الصفحة
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return ShellScaffold(location: state.matchedLocation, child: child);
       },
+
+      //ShellScaffold (ثابت)
+      //  ├── HomeView
+      //  ├── SearchView
+      //  ├── FavouritesView
+      //تشبيه: ShellRoute هو ال
+      //     بيت (ShellRoute)
+      //     غرف (Routes)
       routes: <RouteBase>[
         GoRoute(
           path: AppRoutes.home,
@@ -41,8 +59,9 @@ final GoRouter appRouter = GoRouter(
               path: 'category/:categoryName',
               builder: (BuildContext context, GoRouterState state) {
                 // نقرأ اسم التصنيف من رابط الصفحة.
-                final String categoryName = state.pathParameters['categoryName'] ?? '';
-                return HomeView(initialCategoryName: categoryName);
+                final String categoryName =
+                    state.pathParameters['categoryName'] ?? '';
+                return HomeView(initialCategoryName: categoryName); // نمرر اسم التصنيف إلى HomeView لعرض الوجبات المناسبة.
               },
             ),
             GoRoute(
@@ -50,7 +69,7 @@ final GoRouter appRouter = GoRouter(
               builder: (BuildContext context, GoRouterState state) {
                 // نقرأ رقم الوجبة من رابط الصفحة.
                 final String mealId = state.pathParameters['mealId'] ?? '';
-                return HomeView(initialMealId: mealId);
+                return HomeView(initialMealId: mealId); // نمرر رقم الوجبة إلى HomeView لعرض تفاصيلها.
               },
             ),
           ],
@@ -77,3 +96,15 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
+// شو هو GoRoute؟
+
+// GoRoute هو:
+// 👉 تعريف "طريق" (Route) لصفحة معينة في التطبيق
+
+// يعني بكل بساطة:
+
+// إذا المستخدم راح لهالرابط → افتح هاي الصفحة
+  //الفرق بسرعة
+// الأمر	شو يعمل
+// go	يبدل الصفحة
+// push	يضيف صفحة فوق
