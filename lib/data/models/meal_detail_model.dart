@@ -1,3 +1,4 @@
+// Model يمثل شكل البيانات القادمة من API أو المخزنة محليًا.
 class MealDetailModel {
   const MealDetailModel({
     required this.id,

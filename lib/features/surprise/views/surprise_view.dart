@@ -1,3 +1,4 @@
+// View تمثل واجهة المستخدم المرتبطة مباشرة بالـ Controller.
 import 'package:flutter/material.dart';
 
 class SurpriseView extends StatelessWidget {

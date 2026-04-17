@@ -1,3 +1,4 @@
+// هذا هو ملف البداية: يجهز الاعتمادات ثم يشغل تطبيق Recipe Explorer.
 import 'package:flutter/material.dart';
 
 import 'app/app.dart';

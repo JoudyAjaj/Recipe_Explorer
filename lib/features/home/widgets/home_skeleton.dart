@@ -1,3 +1,4 @@
+// Widget قابل لإعادة الاستخدام داخل نفس الميزة.
 import 'package:flutter/material.dart';
 
 class HomeSkeleton extends StatelessWidget {

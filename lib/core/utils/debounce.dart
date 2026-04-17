@@ -1,3 +1,4 @@
+// أدوات مساعدة عامة (Utilities) لتبسيط منطق التطبيق.
 class Debouncer {
   Debouncer({required this.delay});
 

@@ -1,3 +1,4 @@
+// هذا الملف يبني MaterialApp ويصل الثيم مع نظام التنقل Router.
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_theme.dart';

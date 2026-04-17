@@ -1,3 +1,4 @@
+// Model خاص بالميزة لتجميع البيانات بشكل منظم.
 class CategoryModel {
   const CategoryModel({required this.id, required this.name, this.thumb});
 

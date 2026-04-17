@@ -1,8 +1,8 @@
 // Controller في GetX: يدير الحالة والمنطق ويحدّث الواجهة.
 import 'package:get/get.dart';
 
-class SearchController extends GetxController {
+class CategoryMealsController extends GetxController {
   final RxBool isLoading = false.obs;
-  final RxString query = ''.obs;
-  final RxList<String> results = <String>[].obs;
+  final RxString errorMessage = ''.obs;
+  final RxList<String> meals = <String>[].obs;
 }

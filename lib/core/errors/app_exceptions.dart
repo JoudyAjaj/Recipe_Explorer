@@ -1,3 +1,4 @@
+// تعريفات الأخطاء الموحّدة للتعامل مع الفشل داخل التطبيق.
 class AppException implements Exception {
   AppException(this.message);
 

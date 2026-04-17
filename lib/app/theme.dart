@@ -1,3 +1,4 @@
+// إعدادات الثيم والألوان والخطوط العامة للتطبيق.
 import 'package:flutter/material.dart';
 
 ThemeData buildAppTheme() {

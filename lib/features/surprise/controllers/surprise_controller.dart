@@ -1,3 +1,4 @@
+// Controller في GetX: يدير الحالة والمنطق ويحدّث الواجهة.
 import 'package:get/get.dart';
 
 class SurpriseController extends GetxController {

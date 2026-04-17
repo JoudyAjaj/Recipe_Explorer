@@ -1,3 +1,4 @@
+// هذا الملف يعرّف مسارات التطبيق والتنقل بين الشاشات.
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

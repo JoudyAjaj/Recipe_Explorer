@@ -1,3 +1,4 @@
+// أدوات مساعدة عامة (Utilities) لتبسيط منطق التطبيق.
 sealed class Result<T> {
   const Result();
 }
