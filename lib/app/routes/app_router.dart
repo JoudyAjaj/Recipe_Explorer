@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/favourites/views/favourites_view.dart';
+import '../../features/home/screens/category_meals_screen.dart';
 import '../../features/home/views/home_view.dart';
+import '../../features/meal_detail/screens/meal_detail_screen.dart';
 import '../../features/search/views/search_view.dart';
 import '../../features/surprise/views/surprise_view.dart';
 import '../widgets/shell_scaffold.dart';
@@ -26,16 +28,16 @@ class AppRoutes {
   // /home/category/Seafood
   // /home/meal/123
   //   //
-  const AppRoutes._();
+  const AppRoutes._(); //
 }
 
-final GoRouter appRouter = GoRouter(
+final GoRouter appRouter = GoRouter( //
   // نحدد المسار الابتدائي عند تشغيل التطبيق.
   initialLocation:
       AppRoutes.home, // نستخدم ShellRoute لاحتواء التبويبات الرئيسية.
   routes: <RouteBase>[
     // ShellRoute يسمح بثبات الـ Bottom Navigation بين التبويبات.
-    ShellRoute(
+    ShellRoute( 
       //لإطار الثابت (فيه Bottom Nav مثلاً) بيتغير بس محتوى الصفحة
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return ShellScaffold(location: state.matchedLocation, child: child);
@@ -61,15 +63,16 @@ final GoRouter appRouter = GoRouter(
                 // نقرأ اسم التصنيف من رابط الصفحة.
                 final String categoryName =
                     state.pathParameters['categoryName'] ?? '';
-                return HomeView(initialCategoryName: categoryName); // نمرر اسم التصنيف إلى HomeView لعرض الوجبات المناسبة.
+                return CategoryMealsScreen(
+                  categoryName: categoryName,
+                ); // نمرر اسم التصنيف إلى شاشة عرض وجبات التصنيف.
               },
             ),
             GoRoute(
               path: 'meal/:mealId',
               builder: (BuildContext context, GoRouterState state) {
-                // نقرأ رقم الوجبة من رابط الصفحة.
                 final String mealId = state.pathParameters['mealId'] ?? '';
-                return HomeView(initialMealId: mealId); // نمرر رقم الوجبة إلى HomeView لعرض تفاصيلها.
+                return MealDetailScreen(mealId: mealId);
               },
             ),
           ],

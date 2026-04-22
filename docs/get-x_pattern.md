@@ -1,3 +1,3 @@
 # Get Pattern
 
-Starter note for provider-based state management.
+Starter note for GetX-based state management.

@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ThemeData buildAppTheme() {
+  const Color accentIconColor = Color(0xFFFF5A30);
+  const Color inactiveIconColor = Color(0xFFBDBDBD);
   const Color seed = Color(0xFF355C7D);
   final ColorScheme colorScheme = ColorScheme.fromSeed(
-    seedColor: seed,
-    brightness: Brightness.light,
-    surface: const Color(0xFFFAF7F2),
+    seedColor: seed, // نستخدم لون البذرة لتوليد نظام ألوان متناسق.
+    brightness: Brightness.light, // نختار سطوع فاتح ليتناسب مع تصميمنا العام.
+    surface: const Color(0xFFFAF7F2), // لون خلفية عام لجميع الشاشات.
   );
 
-  final TextTheme textTheme = GoogleFonts.poppinsTextTheme().copyWith(
-    headlineLarge: GoogleFonts.playfairDisplay(
+  final TextTheme textTheme = GoogleFonts.poppinsTextTheme().copyWith( // نستخدم خط Poppins للنصوص العادية و Playfair Display للعناوين لإضفاء طابع مميز وأنيق.
+    headlineLarge: GoogleFonts.playfairDisplay( // العنوان الرئيسي في التطبيق، مثل اسم التطبيق في الشاشة الرئيسية أو عنوان التصنيف.
       fontSize: 32,
       fontWeight: FontWeight.w700,
-      color: colorScheme.onSurface,
+      color: colorScheme.onSurface, // نستخدم لون النص المناسب حسب نظام الألوان المولد.
     ),
-    headlineMedium: GoogleFonts.playfairDisplay(
+    headlineMedium: GoogleFonts.playfairDisplay( //
       fontSize: 24,
       fontWeight: FontWeight.w700,
       color: colorScheme.onSurface,
@@ -37,7 +39,7 @@ ThemeData buildAppTheme() {
   );
 
   return ThemeData(
-    useMaterial3: true,
+    useMaterial3: true,  //
     colorScheme: colorScheme,
     textTheme: textTheme,
     scaffoldBackgroundColor: colorScheme.surface,
@@ -55,7 +57,7 @@ ThemeData buildAppTheme() {
       ),
       margin: EdgeInsets.zero,
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: InputDecorationTheme( //
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
@@ -70,6 +72,24 @@ ThemeData buildAppTheme() {
         borderRadius: BorderRadius.circular(18),
         borderSide: BorderSide(color: colorScheme.primary, width: 1.4),
       ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: Colors.white,
+      indicatorColor: Colors.transparent,
+      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+        final bool isSelected = states.contains(WidgetState.selected);
+        return textTheme.labelMedium!.copyWith(
+          color: isSelected ? accentIconColor : inactiveIconColor,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
+        final bool isSelected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          color: isSelected ? accentIconColor : inactiveIconColor,
+          size: 26,
+        );
+      }),
     ),
   );
 }

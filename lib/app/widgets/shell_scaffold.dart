@@ -18,7 +18,7 @@ class ShellScaffold extends StatelessWidget {
     return 0;
   }
 
-  void _goBranch(BuildContext context, int index) {
+  void _goBranch(BuildContext context, int index) { // هاي الدالة بتتصل لما المستخدم يختار تبويب جديد من الـ NavigationBar، وبتنقل للمسار المناسب.
     // كل عنصر في الـ NavigationBar يقابله مسار واضح.
     switch (index) {
       case 0:
@@ -42,13 +42,15 @@ class ShellScaffold extends StatelessWidget {
       // child هنا هو محتوى الشاشة النشط داخل الـ ShellRoute.
       body: child,
       bottomNavigationBar: NavigationBar(
+        indicatorColor: Colors.transparent,
+        backgroundColor: Colors.white,
         selectedIndex: _currentIndex,
         onDestinationSelected: (int index) => _goBranch(context, index),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.grid_view_rounded), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.search_rounded), label: 'Search'),
           NavigationDestination(icon: Icon(Icons.auto_awesome_rounded), label: 'Surprise'),
-          NavigationDestination(icon: Icon(Icons.bookmark_rounded), label: 'Favourites'),
+          NavigationDestination(icon: Icon(Icons.favorite_border_rounded), label: 'Favourites'),
         ],
       ),
     );

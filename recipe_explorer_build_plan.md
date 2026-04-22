@@ -305,13 +305,7 @@ Do not use skeleton on:
 - Remove item and sync everywhere
 - Empty state with call to action
 
-### Surprise
-- Fetch random meal from API
-- Animated reveal with AnimationController
-- Try Again button
-- Error + retry
-- No skeleton
-
+### 
 ---
 
 ## 10) Offline and Error Handling Strategy
