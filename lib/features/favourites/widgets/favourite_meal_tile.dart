@@ -10,11 +10,15 @@ class FavouriteMealTile extends StatelessWidget {
     required this.meal,
     this.onTap,
     this.onRemove,
+    this.isFavourite = true,
+    this.onToggleFavourite,
   });
 
   final MealSummaryModel meal;
   final VoidCallback? onTap;
   final VoidCallback? onRemove;
+  final bool isFavourite;
+  final VoidCallback? onToggleFavourite;
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +86,25 @@ class FavouriteMealTile extends StatelessWidget {
                 ),
               ),
             ),
-            IconButton(
-              onPressed: onRemove,
-              icon: const Icon(
-                Icons.delete_outline_rounded,
-                color: Color(0xFFFF5A30),
+            // Favorite Toggle Button
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: onToggleFavourite,
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Icon(
+                    isFavourite
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    color: isFavourite
+                        ? const Color(0xFFFF5A30)
+                        : scheme.onSurfaceVariant,
+                    size: 24,
+                  ),
+                ),
               ),
-              tooltip: 'Remove from favourites',
             ),
           ],
         ),

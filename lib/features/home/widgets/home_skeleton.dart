@@ -12,16 +12,12 @@ class HomeSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // نعرض هيكل Grid نفسه حتى يستطيع Skeletonizer رسمه بشكل جميل.
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16), // نفس الحشو الذي نستخدمه في شبكة التصنيفات الحقيقية، مما يجعل الهيكل العظمي يتطابق تمامًا مع التصميم النهائي.
+    // نعرض شريط أفقي مشابه للتصميم النهائي أثناء التحميل.
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 18),
+      scrollDirection: Axis.horizontal,
       itemCount: itemCount,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount( // نحدد عدد الأعمدة والمسافات بين العناصر في الشبكة.
-        crossAxisCount: 2, // عدد الأعمدة في الشبكة (2 بطاقة في كل صف).
-        mainAxisSpacing: 16, // المسافة الرأسية بين الصفوف.
-        crossAxisSpacing: 16, // المسافة الأفقية بين العناصر.
-        childAspectRatio: 0.82, // نسبة العرض إلى الارتفاع لكل بطاقة (تجعل البطاقات أطول قليلاً).
-      ),
+      separatorBuilder: (_, __) => const SizedBox(width: 16),
       itemBuilder: (context, index) {
         return CategoryCard(
           category: const CategoryModel(id: '', name: '', thumb: ''),

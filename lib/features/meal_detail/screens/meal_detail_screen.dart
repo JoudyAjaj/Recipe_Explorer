@@ -24,27 +24,6 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   late final MealDetailController _controller;
   late final FavouritesController _favouritesController;
 
-  void _openImagePreview(MealDetailModel meal) {
-    final String? imageUrl = meal.image;
-    if (imageUrl == null || imageUrl.isEmpty) {
-      return;
-    }
-
-    Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        opaque: false,
-        barrierColor: Colors.black,
-        pageBuilder: (_, __, ___) => _FullScreenMealImage(
-          tag: 'meal-image-${meal.id}',
-          imageUrl: imageUrl,
-        ),
-        transitionsBuilder: (_, animation, __, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -63,8 +42,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double imageHeight =
-        (MediaQuery.sizeOf(context).width * 0.45).clamp(150.0, 190.0);
+    final double imageDiameter = (MediaQuery.sizeOf(context).width * 0.42)
+        .clamp(150.0, 200.0);
 
     return Scaffold(
       backgroundColor: const Color(0xFFE9EAEE),
@@ -102,7 +81,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                       child: CustomScrollView(
                         slivers: <Widget>[
                           SliverAppBar(
-                            expandedHeight: imageHeight,
+                            expandedHeight: imageDiameter + 54,
                             pinned: true,
                             backgroundColor: Colors.white,
                             surfaceTintColor: Colors.transparent,
@@ -134,41 +113,73 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                               }),
                             ],
                             flexibleSpace: FlexibleSpaceBar(
-                              background: Hero(
-                                tag: 'meal-image-${meal.id}',
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    onTap: meal.image == null
-                                        ? null
-                                        : () => _openImagePreview(meal),
-                                    child: meal.image == null
-                                        ? Container(
-                                            color: const Color(0xFFF4F4F4),
-                                            child: const Icon(
-                                              Icons.fastfood_rounded,
-                                              size: 56,
+                              background: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: <Color>[
+                                      Color(0xFFF7F8FB),
+                                      Color(0xFFFFFFFF),
+                                    ],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Hero(
+                                    tag: 'meal-image-${meal.id}',
+                                    child: Container(
+                                      width: imageDiameter,
+                                      height: imageDiameter,
+                                      padding: const EdgeInsets.all(7),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.10,
                                             ),
-                                          )
-                                        : CachedNetworkImage(
-                                            imageUrl: meal.image!,
-                                          fit: BoxFit.contain,
-                                            placeholder: (context, url) =>
-                                                Container(
-                                                  color: const Color(0xFFF4F4F4),
-                                                ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Container(
-                                                      color: const Color(
-                                                        0xFFF4F4F4,
-                                                      ),
-                                                      child: const Icon(
-                                                        Icons.fastfood_rounded,
-                                                        size: 56,
-                                                      ),
-                                                    ),
+                                            blurRadius: 24,
+                                            offset: const Offset(0, 12),
                                           ),
+                                        ],
+                                      ),
+                                      child: ClipOval(
+                                        child: Material(
+                                          color: const Color(0xFFF4F4F4),
+                                          child: meal.image == null
+                                              ? const Center(
+                                                  child: Icon(
+                                                    Icons.fastfood_rounded,
+                                                    size: 56,
+                                                  ),
+                                                )
+                                              : CachedNetworkImage(
+                                                  imageUrl: meal.image!,
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                              strokeWidth: 2.2,
+                                                            ),
+                                                      ),
+                                                  errorWidget:
+                                                      (
+                                                        context,
+                                                        url,
+                                                        error,
+                                                      ) => const Center(
+                                                        child: Icon(
+                                                          Icons
+                                                              .fastfood_rounded,
+                                                          size: 56,
+                                                        ),
+                                                      ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -207,9 +218,20 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                   const SizedBox(height: 14),
                                   const Divider(height: 1),
                                   const SizedBox(height: 16),
-                                  const _SectionBadge(title: 'Ingredients'),
+                                  Row(
+                                    children: <Widget>[
+                                      const _SectionBadge(title: 'Ingredients'),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Container(
+                                          height: 1,
+                                          color: const Color(0xFFE5E7EB),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   const SizedBox(height: 14),
-                                  ..._buildIngredientItems(meal.ingredients),
+                                  _buildIngredientRows(meal.ingredients),
                                   const SizedBox(height: 18),
                                   const Divider(height: 1),
                                   const SizedBox(height: 16),
@@ -294,33 +316,178 @@ String _buildShareText(MealDetailModel meal) {
   return buffer.toString();
 }
 
-List<Widget> _buildIngredientItems(List<String> ingredients) {
+Widget _buildIngredientRows(List<String> ingredients) {
   if (ingredients.isEmpty) {
-    return const <Widget>[
-      Text(
-        '• Ingredients are unavailable for this meal.',
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Color(0xFF303030),
-        ),
-      ),
-    ];
-  }
-
-  return ingredients.take(8).map((String ingredient) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        '•  $ingredient',
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Color(0xFF2F2F2F),
-        ),
+    return const Text(
+      'Ingredients are unavailable for this meal.',
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF303030),
       ),
     );
-  }).toList();
+  }
+
+  final List<String> visibleIngredients = ingredients.take(8).toList();
+
+  return SizedBox(
+    height: 92,
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      itemCount: visibleIngredients.length,
+      separatorBuilder: (context, index) => const SizedBox(width: 12),
+      itemBuilder: (context, index) {
+        final String ingredient = visibleIngredients[index];
+        final _IngredientVisual visual = _ingredientVisualFor(ingredient);
+
+        return Container(
+          width: 178,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: visual.background,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: visual.border, width: 1),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: visual.iconBackground,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(visual.icon, color: visual.iconColor, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  ingredient,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF2F3138),
+                    height: 1.15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
+_IngredientVisual _ingredientVisualFor(String ingredient) {
+  final String lower = ingredient.toLowerCase();
+
+  if (lower.contains('salt')) {
+    return const _IngredientVisual(
+      icon: Icons.soup_kitchen_rounded,
+      iconColor: Color(0xFF4E8FBF),
+      iconBackground: Color(0xFFDDEDF8),
+      background: Color(0xFFF8FBFE),
+      border: Color(0xFFE3EEF8),
+    );
+  }
+  if (lower.contains('sugar')) {
+    return const _IngredientVisual(
+      icon: Icons.cake_rounded,
+      iconColor: Color(0xFFE38A2B),
+      iconBackground: Color(0xFFFFE7CC),
+      background: Color(0xFFFFFBF5),
+      border: Color(0xFFFFE8CE),
+    );
+  }
+  if (lower.contains('flour')) {
+    return const _IngredientVisual(
+      icon: Icons.bakery_dining_rounded,
+      iconColor: Color(0xFF7D5B3E),
+      iconBackground: Color(0xFFF2E5D9),
+      background: Color(0xFFFCF8F4),
+      border: Color(0xFFF0E2D6),
+    );
+  }
+  if (lower.contains('water')) {
+    return const _IngredientVisual(
+      icon: Icons.water_drop_rounded,
+      iconColor: Color(0xFF2F9AD6),
+      iconBackground: Color(0xFFDDF3FF),
+      background: Color(0xFFF8FDFF),
+      border: Color(0xFFDDEFF9),
+    );
+  }
+  if (lower.contains('oil')) {
+    return const _IngredientVisual(
+      icon: Icons.opacity_rounded,
+      iconColor: Color(0xFF52A35B),
+      iconBackground: Color(0xFFE2F5E3),
+      background: Color(0xFFF8FCF8),
+      border: Color(0xFFE1F1E2),
+    );
+  }
+  if (lower.contains('pepper')) {
+    return const _IngredientVisual(
+      icon: Icons.local_fire_department_rounded,
+      iconColor: Color(0xFFE45C3C),
+      iconBackground: Color(0xFFFFE1D8),
+      background: Color(0xFFFFFAF8),
+      border: Color(0xFFFFE2DA),
+    );
+  }
+  if (lower.contains('onion')) {
+    return const _IngredientVisual(
+      icon: Icons.ramen_dining_rounded,
+      iconColor: Color(0xFFB16A3C),
+      iconBackground: Color(0xFFF4E0D0),
+      background: Color(0xFFFEF9F5),
+      border: Color(0xFFF2E2D6),
+    );
+  }
+  if (lower.contains('garlic')) {
+    return const _IngredientVisual(
+      icon: Icons.kitchen_rounded,
+      iconColor: Color(0xFF8E6B3C),
+      iconBackground: Color(0xFFF0E3CC),
+      background: Color(0xFFFCF9F1),
+      border: Color(0xFFF0E4C8),
+    );
+  }
+
+  return const _IngredientVisual(
+    icon: Icons.restaurant_menu_rounded,
+    iconColor: Color(0xFFFF5A30),
+    iconBackground: Color(0xFFFFE4DB),
+    background: Color(0xFFFFFAF8),
+    border: Color(0xFFFBE0D7),
+  );
+}
+
+class _IngredientVisual {
+  const _IngredientVisual({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBackground,
+    required this.background,
+    required this.border,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBackground;
+  final Color background;
+  final Color border;
 }
 
 List<Widget> _buildInstructionItems(String? instructions) {
@@ -432,79 +599,6 @@ class _RoundIconButton extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 22),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _FullScreenMealImage extends StatelessWidget {
-  const _FullScreenMealImage({required this.tag, required this.imageUrl});
-
-  static const Color _accentColor = Color(0xFFFF5A30);
-
-  final String tag;
-  final String imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: <Widget>[
-          Positioned.fill(
-            child: InteractiveViewer(
-              minScale: 1,
-              maxScale: 4,
-              child: Hero(
-                tag: tag,
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  placeholder: (context, url) => const Center(
-                    child: SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFF5E5E5E),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Icon(
-                      Icons.broken_image_rounded,
-                      color: Color(0xFF8A8A8A),
-                      size: 42,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              style: ButtonStyle(
-                foregroundColor: WidgetStateProperty.resolveWith<Color>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return _accentColor;
-                  }
-                  return Colors.white;
-                }),
-                backgroundColor: WidgetStateProperty.all(
-                  Colors.black.withValues(alpha: 0.35),
-                ),
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close_rounded),
-            ),
-          ),
-        ],
       ),
     );
   }

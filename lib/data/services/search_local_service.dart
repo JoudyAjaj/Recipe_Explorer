@@ -13,7 +13,7 @@ class SearchLocalService {
 
   Future<String> loadLastQuery() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(_lastQueryKey) ?? '';
+    return preferences.getString(_lastQueryKey) ?? '';//
   }
 
   Future<List<MealSummaryModel>> loadLastResults() async {

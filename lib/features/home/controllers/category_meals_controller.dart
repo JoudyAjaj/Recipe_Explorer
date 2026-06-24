@@ -27,7 +27,7 @@ class CategoryMealsController extends GetxController { // هذا الكنترو�
     try {
       final bool online = await _connectivityService.isOnline();
       if (!online) {
-        throw AppException('أنت غير متصل بالإنترنت. أعد المحاولة عند توفر الشبكة.');
+        throw AppException('You are offline. Try again when the network is available.');
       }
 
       final List<MealSummaryModel> items =
@@ -37,7 +37,7 @@ class CategoryMealsController extends GetxController { // هذا الكنترو�
       errorMessage.value = error.message;
       meals.clear();
     } catch (_) {
-      errorMessage.value = 'حدث خطأ غير متوقع أثناء تحميل وجبات التصنيف.';
+      errorMessage.value = 'An unexpected error occurred while loading category meals.';
       meals.clear();
     } finally {
       isLoading.value = false;

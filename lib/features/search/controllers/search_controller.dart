@@ -18,7 +18,9 @@ class SearchController extends GetxController {
 
   final MealApiService _apiService;
   final SearchLocalService _localService;
-  final Debouncer _debouncer = Debouncer(delay: const Duration(milliseconds: 400));
+  final Debouncer _debouncer = Debouncer(
+    delay: const Duration(milliseconds: 400),
+  );
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -35,8 +37,8 @@ class SearchController extends GetxController {
 
   Future<void> _restoreLastSearch() async {
     final String lastQuery = await _localService.loadLastQuery();
-    final List<MealSummaryModel> lastResults =
-        await _localService.loadLastResults();
+    final List<MealSummaryModel> lastResults = await _localService
+        .loadLastResults();
 
     query.value = lastQuery;
     results.assignAll(lastResults);
@@ -45,6 +47,13 @@ class SearchController extends GetxController {
   void onQueryChanged(String value) {
     query.value = value;
     errorMessage.value = '';
+
+    final String trimmedValue = value.trim();
+
+    if (trimmedValue.isEmpty) {
+      isLoading.value = false;
+      return;
+    }
 
     if (!hasEnoughCharacters) {
       isLoading.value = false;
@@ -60,7 +69,8 @@ class SearchController extends GetxController {
   Future<void> searchNow(String rawQuery) async {
     final String trimmedQuery = rawQuery.trim();
 
-    if (trimmedQuery.length < minQueryLength) {// هذا تحقق إضافي للتأكد من أن البحث لا يتم إذا كان عدد الأحرف أقل من الحد الأدنى، حتى لو تم تجاوز الـ Debouncer.
+    if (trimmedQuery.length < minQueryLength) {
+      // هذا تحقق إضافي للتأكد من أن البحث لا يتم إذا كان عدد الأحرف أقل من الحد الأدنى، حتى لو تم تجاوز الـ Debouncer.
       isLoading.value = false;
       errorMessage.value = '';
       results.clear();
@@ -80,7 +90,7 @@ class SearchController extends GetxController {
       errorMessage.value = error.message;
       results.clear();
     } catch (_) {
-      errorMessage.value = 'حدث خطأ غير متوقع أثناء البحث.';
+      errorMessage.value = 'An unexpected error occurred while searching.';
       results.clear();
     } finally {
       isLoading.value = false;
@@ -91,12 +101,12 @@ class SearchController extends GetxController {
     await searchNow(query.value);
   }
 
-  void clearQuery() { // هذا يستخدم عندما يضغط المستخدم على زر مسح النص في حقل البحث، لإعادة تعيين كل الحالات إلى الوضع الافتراضي.
+  void clearQuery() {
+    // هذا يستخدم عندما يضغط المستخدم على زر مسح النص في حقل البحث، لإعادة تعيين كل الحالات إلى الوضع الافتراضي.
     query.value = ''; // إعادة تعيين الاستعلام إلى نص فارغ.
-    errorMessage.value = '';// مسح أي رسالة خطأ موجودة.
+    errorMessage.value = ''; // مسح أي رسالة خطأ موجودة.
     isLoading.value = false; // إيقاف حالة التحميل إذا كانت نشطة.
-    results.clear();// مسح نتائج البحث الحالية لعرض الحالة الافتراضية (بدون نتائج).
-    _localService.clearLastSearch();
+    // نترك النتائج كما هي لعرض آخر نتائج محفوظة عند رجوع المستخدم لشاشة البحث.
   }
 
   @override

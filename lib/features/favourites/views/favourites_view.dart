@@ -39,10 +39,14 @@ class FavouritesView extends StatelessWidget {
 
             return FavouriteMealTile(
               meal: meal,
+              isFavourite: true,
               onTap: () {
                 context.go(
                   '${AppRoutes.home}/meal/${Uri.encodeComponent(meal.id)}',
                 );
+              },
+              onToggleFavourite: () {
+                controller.toggleFavouriteMeal(meal);
               },
               onRemove: () {
                 controller.removeFavourite(meal.id);

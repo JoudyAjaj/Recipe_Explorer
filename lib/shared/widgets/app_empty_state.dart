@@ -5,7 +5,7 @@ class AppEmptyState extends StatelessWidget { // هذا ال Widget يستخدم
   const AppEmptyState({
     super.key,
     required this.message,
-    this.title = 'لا توجد بيانات',
+    this.title = 'No data found',
     this.icon = Icons.inbox_outlined,
   });
 

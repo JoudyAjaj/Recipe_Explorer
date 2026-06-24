@@ -36,19 +36,19 @@ class FavouritesLocalService {
             return null;
           }
         })
-        .whereType<MealSummaryModel>()
-        .where((MealSummaryModel meal) => meal.id.trim().isNotEmpty)
-        .toList();
+        .whereType<MealSummaryModel>()// بتصفية أي عناصر غير صالحة (null) بعد محاولة التحويل من JSON إلى كائن MealSummaryModel.
+        .where((MealSummaryModel meal) => meal.id.trim().isNotEmpty)// بتصفية أي وجبات تحتوي على معرف فارغ أو فقط مسافات.
+        .toList();// بتحول كل عنصر صالح إلى كائن MealSummaryModel وتجمعهم في قائمة.
 
-    if (parsedMeals.isNotEmpty) {
+    if (parsedMeals.isNotEmpty) { //إذا كانت هناك وجبات صالحة تم تحميلها من SharedPreferences، يتم إرجاعها مباشرة. هذا يعني أن التطبيق سيستخدم البيانات الجديدة المخزنة بشكل كامل (ID، الاسم، الصورة) بدلاً من الاعتماد فقط على IDs القديمة.
       return parsedMeals;
     }
 
     // fallback للبيانات القديمة التي كانت تحفظ IDs فقط.
     final List<String> ids = await loadFavouriteMealIds();
     return ids
-        .where((String id) => id.trim().isNotEmpty)
-        .map((String id) => MealSummaryModel(id: id, name: 'Meal #$id'))
+        .where((String id) => id.trim().isNotEmpty)// بتصفية أي معرفات فارغة أو تحتوي فقط على مسافات.
+        .map((String id) => MealSummaryModel(id: id, name: 'Meal #$id'))// بتحويل كل معرف صالح إلى كائن MealSummaryModel بسيط يحتوي فقط على ID واسم افتراضي (مثل "Meal #123"). هذا يسمح للتطبيق بالاستمرار في العمل مع البيانات القديمة حتى يتم تحديثها بالبيانات الجديدة.
         .toList();
   }
 

@@ -10,5 +10,6 @@ ThemeData buildAppTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: colorScheme.surface,
+    fontFamily: 'Roboto',
   );
 }

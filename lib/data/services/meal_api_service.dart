@@ -1,4 +1,4 @@
-// Service مسؤول عن جلب/حفظ البيانات بعيدًا عن الواجهة.
+// Service responsible for fetching and storing data away from the UI.
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -12,7 +12,7 @@ import '../models/meal_summary_model.dart';
 class MealApiService {
   const MealApiService();
 
-  // نجلب قائمة تصنيفات TheMealDB من الشبكة.
+  // Fetch categories from TheMealDB.
   Future<List<CategoryModel>> fetchCategories() async {
     final Uri url = Uri.parse(ApiEndpoints.categories);
 
@@ -20,7 +20,7 @@ class MealApiService {
       final http.Response response = await http.get(url);
 
       if (response.statusCode != 200) {
-        throw AppException('تعذر جلب التصنيفات الآن. حاول مرة أخرى.');
+        throw AppException('Could not load categories right now. Try again.');
       }
 
       final Map<String, dynamic> data =
@@ -37,11 +37,11 @@ class MealApiService {
         rethrow;
       }
 
-      throw AppException('حدث خطأ أثناء الاتصال بالخدمة. تأكد من الإنترنت.');
+      throw AppException('A network error occurred. Check your internet connection.');
     }
   }
 
-  // نجلب الوجبات ضمن تصنيف محدد من TheMealDB.
+  // Fetch meals for a specific category from TheMealDB.
   Future<List<MealSummaryModel>> fetchMealsByCategory(
     String categoryName,
   ) async {
@@ -53,7 +53,7 @@ class MealApiService {
       final http.Response response = await http.get(url);
 
       if (response.statusCode != 200) {
-        throw AppException('تعذر جلب الوجبات لهذا التصنيف. حاول مرة أخرى.');
+        throw AppException('Could not load meals for this category. Try again.');
       }
 
       final Map<String, dynamic> data =
@@ -77,11 +77,11 @@ class MealApiService {
         rethrow;
       }
 
-      throw AppException('حدث خطأ أثناء جلب وجبات التصنيف. تأكد من الإنترنت.');
+      throw AppException('A network error occurred while loading category meals. Check your internet connection.');
     }
   }
 
-  // نجلب نتائج البحث بالاسم من TheMealDB.
+  // Fetch search results by name from TheMealDB.
   Future<List<MealSummaryModel>> searchMealsByName(String query) async {
     final Uri url = Uri.parse(
       '${ApiEndpoints.search}${Uri.encodeQueryComponent(query)}',
@@ -91,12 +91,13 @@ class MealApiService {
       final http.Response response = await http.get(url);
 
       if (response.statusCode != 200) {
-        throw AppException('تعذر تنفيذ البحث الآن. حاول مرة أخرى.');
+        throw AppException('Could not perform the search right now. Try again.');
       }
 
       final Map<String, dynamic> data =
           jsonDecode(response.body) as Map<String, dynamic>;
-      final List<dynamic> rawMeals = data['meals'] as List<dynamic>? ?? <dynamic>[];
+      final List<dynamic> rawMeals =
+          data['meals'] as List<dynamic>? ?? <dynamic>[];
 
       return rawMeals.whereType<Map<String, dynamic>>().map((
         Map<String, dynamic> meal,
@@ -114,11 +115,11 @@ class MealApiService {
         rethrow;
       }
 
-      throw AppException('حدث خطأ أثناء البحث. تأكد من الإنترنت.');
+      throw AppException('A network error occurred while searching. Check your internet connection.');
     }
   }
 
-  // نجلب تفاصيل وجبة واحدة عبر id.
+  // Fetch a single meal by id.
   Future<MealDetailModel> fetchMealDetailById(String mealId) async {
     final Uri url = Uri.parse(
       '${ApiEndpoints.mealById}${Uri.encodeQueryComponent(mealId)}',
@@ -128,7 +129,7 @@ class MealApiService {
       final http.Response response = await http.get(url);
 
       if (response.statusCode != 200) {
-        throw AppException('تعذر جلب تفاصيل الوجبة الآن. حاول مرة أخرى.');
+        throw AppException('Could not load meal details right now. Try again.');
       }
 
       final Map<String, dynamic> data =
@@ -137,7 +138,7 @@ class MealApiService {
           data['meals'] as List<dynamic>? ?? <dynamic>[];
 
       if (rawMeals.isEmpty) {
-        throw AppException('لا توجد تفاصيل لهذه الوجبة.');
+        throw AppException('No details were found for this meal.');
       }
 
       final Map<String, dynamic> meal = rawMeals.first as Map<String, dynamic>;
@@ -156,7 +157,47 @@ class MealApiService {
         rethrow;
       }
 
-      throw AppException('حدث خطأ أثناء جلب تفاصيل الوجبة. تأكد من الإنترنت.');
+      throw AppException('A network error occurred while loading meal details. Check your internet connection.');
+    }
+  }
+
+  // Fetch a random meal from TheMealDB.
+  Future<MealDetailModel> fetchRandomMeal() async {
+    final Uri url = Uri.parse(ApiEndpoints.random);
+
+    try {
+      final http.Response response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        throw AppException('Could not load a surprise meal right now. Try again.');
+      }
+
+      final Map<String, dynamic> data =
+          jsonDecode(response.body) as Map<String, dynamic>;
+      final List<dynamic> rawMeals =
+          data['meals'] as List<dynamic>? ?? <dynamic>[];
+
+      if (rawMeals.isEmpty) {
+        throw AppException('No surprise meal was returned. Please try again.');
+      }
+
+      final Map<String, dynamic> meal = rawMeals.first as Map<String, dynamic>;
+
+      return MealDetailModel(
+        id: (meal['idMeal'] ?? '').toString(),
+        name: (meal['strMeal'] ?? '').toString(),
+        image: _safeTrim(meal['strMealThumb']),
+        category: _safeTrim(meal['strCategory']),
+        area: _safeTrim(meal['strArea']),
+        instructions: _safeTrim(meal['strInstructions']),
+        ingredients: _extractIngredients(meal),
+      );
+    } catch (error) {
+      if (error is AppException) {
+        rethrow;
+      }
+
+      throw AppException('A network error occurred while loading a surprise meal. Check your internet connection.');
     }
   }
 

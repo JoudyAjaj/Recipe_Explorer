@@ -25,7 +25,8 @@ class FavouritesController extends GetxController {
   Future<void> loadFavourites() async {
     isLoading.value = true;
     try {
-      final List<MealSummaryModel> meals = await _localService.loadFavouriteMeals();
+      final List<MealSummaryModel> meals = await _localService
+          .loadFavouriteMeals();
       favouriteMeals.assignAll(meals);
     } finally {
       isLoading.value = false;

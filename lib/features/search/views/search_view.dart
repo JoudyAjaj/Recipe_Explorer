@@ -42,7 +42,8 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Search Recipes')),
       body: Column(
-        children: <Widget>[// أول جزء من الشاشة هو حقل البحث، حيث يمكن للمستخدم كتابة استعلام البحث. هذا الحقل مرتبط بالـ Controller ليتفاعل معه مباشرة.     
+        children: <Widget>[
+          // أول جزء من الشاشة هو حقل البحث، حيث يمكن للمستخدم كتابة استعلام البحث. هذا الحقل مرتبط بالـ Controller ليتفاعل معه مباشرة.
           Obx(() {
             if (_textController.text != _controller.query.value) {
               _textController.value = TextEditingValue(

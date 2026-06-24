@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/errors/app_exceptions.dart';
 import '../../../core/network/connectivity_service.dart';
 import '../../../data/models/meal_detail_model.dart';
-import '../../../data/services/meal_api_service.dart'; // هذا ال Controller مسؤول عن إدارة حالة شاشة تفاصيل الوجبة، بما في ذلك جلب بيانات الوجبة من API، التعامل مع حالات التحميل والأخطاء، وتوفير بيانات الوجبة للواجهة لعرضها.
+import '../../../data/services/meal_api_service.dart';
 
 class MealDetailController extends GetxController {
   MealDetailController({
@@ -25,7 +25,7 @@ class MealDetailController extends GetxController {
   Future<void> loadMealDetail(String id) async {
     final String sanitizedId = id.trim();
     if (sanitizedId.isEmpty) {
-      errorMessage.value = 'معرف الوجبة غير صالح.';
+      errorMessage.value = 'Invalid meal id.';
       meal.value = null;
       return;
     }
@@ -38,7 +38,7 @@ class MealDetailController extends GetxController {
       final bool isOnline = await _connectivityService.isOnline();
       if (!isOnline) {
         throw AppException(
-          'أنت غير متصل بالإنترنت. أعد المحاولة عند توفر الشبكة.',
+          'You are offline. Try again when the network is available.',
         );
       }
 
@@ -51,7 +51,7 @@ class MealDetailController extends GetxController {
       errorMessage.value = error.message;
     } catch (_) {
       meal.value = null;
-      errorMessage.value = 'حدث خطأ غير متوقع أثناء تحميل تفاصيل الوجبة.';
+      errorMessage.value = 'An unexpected error occurred while loading meal details.';
     } finally {
       isLoading.value = false;
     }

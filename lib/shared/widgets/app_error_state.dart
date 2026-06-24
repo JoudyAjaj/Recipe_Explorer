@@ -8,7 +8,7 @@ class AppErrorState extends StatelessWidget {
     super.key,
     required this.message,
     required this.onRetry,
-    this.title = 'حدث خطأ',
+    this.title = 'Something went wrong',
   });
 
   // عنوان مختصر يشرح نوع الحالة.
